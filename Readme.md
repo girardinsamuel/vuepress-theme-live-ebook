@@ -50,6 +50,17 @@ module.exports = {
       dribbble: 'netguru',
       behance: 'netguru',
     },
+    bodyScripts: [ // Allows to pass additional scripts at the end of body
+      {
+        tagName: 'script', // required
+        attributes: { id: 'some-analytics', async: true, defer: true, src: '//some-analytics.js' } // required
+      },
+      {
+        tagName: 'noscript', // required
+        attributes: {}, // required (can be empty)
+        innerHTML: '<h1>Any content</h1>' // optional
+      }
+    ],
   },
 
   chainWebpack: (config) => {
