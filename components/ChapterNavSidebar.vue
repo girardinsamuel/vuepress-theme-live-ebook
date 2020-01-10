@@ -177,10 +177,8 @@ export default {
     padding 2rem 0
 
 .chapter-sections
-  position absolute
   width 100%
   top 250px
-  padding 0 70px 0 0
 
   &.fade-right-leave-active
     transition-delay 0.25s
