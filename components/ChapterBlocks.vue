@@ -1,48 +1,63 @@
 <template>
-  <ul class="chapter-blocks">
-    <li
-      v-for="(chapter, index) in chapters"
-      :key="chapter.key"
-      class="chapter"
+  <div class="chapter-blocks-wrapper">
+    <ul
+      class="chapter-blocks"
+      :class="{
+        'chapter-blocks--carousel': hasCarousel,
+        'js-carousel': hasCarousel
+      }"
+    >
+      <li
+        v-for="(chapter, index) in chapters"
+        :key="chapter.key"
+        class="chapter"
+      >
+        <ChapterBlock
+          :chapter-data="chapter"
+          :order="index"
+          :has-carousel="hasCarousel"
+          :limit-section-in-chapter="limitSectionInChapter"
+        />
+      </li>
+    </ul>
+
+    <div
+      v-if="hasCarousel"
+      class="carousel-buttons"
       data-aos="fade-up"
-      :data-aos-delay="200 * (index + 1)"
       data-aos-duration="1000"
       data-aos-offset="-200"
     >
-      <RouterLink
-        class="chapter__content"
-        :to="chapter.path"
+      <button
+        class="carousel-button carousel-button--prev"
+        aria-label="Previous slide"
+        @click="goPrevSlide"
       >
-        <div class="chapter__header">
-          <span class="header__number">
-            {{ chapter.frontmatter.chapter_number }}
-          </span>
-          <div class="header__arrow">
-            <ArrowRight />
-          </div>
-        </div>
-        <h3 class="chapter__title">
-          {{ chapter.frontmatter.title }}
-        </h3>
-        <ul class="chapter__sections">
-          <li
-            v-for="section in sections(chapter)"
-            :key="section.key"
-            class="chapter__section"
-          >
-            {{ section.title }}
-          </li>
-        </ul>
-      </RouterLink>
-    </li>
-  </ul>
+        <ArrowLeft />
+      </button>
+
+      <button
+        class="carousel-button carousel-button--next"
+        aria-label="Next slide"
+        @click="goNextSlide"
+      >
+        <ArrowRight />
+      </button>
+    </div>
+  </div>
 </template>
 
 <script>
-import ArrowRight from '@theme/assets/svg/landing-arrow-right.svg'
+import Siema from 'siema'
+import ChapterBlock from './ChapterBlock'
+import ArrowRight from '@theme/assets/svg/arrow-right.svg'
+import ArrowLeft from '@theme/assets/svg/arrow-left.svg'
+
 export default {
   components: {
+    ChapterBlock,
     ArrowRight,
+    ArrowLeft,
   },
 
   props: {
@@ -54,13 +69,54 @@ export default {
       type: Number,
       default: undefined,
     },
+    hasCarousel: {
+      type: Boolean,
+      default: false,
+    },
   },
 
-  computed: {
-    sections () {
-      return chapter => chapter.headers && chapter.headers
-        .filter(chapter => chapter.level === 2)
-        .slice(0, this.limitSectionInChapter)
+  data () {
+    return {
+      defaultSettings: {
+        selector: '.js-carousel',
+        duration: 300,
+        easing: 'ease',
+        loop: true,
+        perPage: {
+          992: 3,
+        },
+      },
+    }
+  },
+
+  mounted () {
+    if (this.hasCarousel) {
+      this.initCarousel()
+    }
+  },
+
+  beforeDestroy () {
+    if (this.hasCarousel) {
+      this.destroyCarousel()
+    }
+  },
+
+  methods: {
+    initCarousel () {
+      this.carousel = new Siema(this.defaultSettings)
+    },
+
+    destroyCarousel () {
+      const restoreOriginalMarkup = true
+      this.carousel.destroy(restoreOriginalMarkup)
+    },
+
+    goNextSlide (index) {
+      this.carousel.next()
+    },
+
+    goPrevSlide (index) {
+      this.carousel.prev()
     },
   },
 }
@@ -70,25 +126,29 @@ export default {
   @require '~@theme/styles/shared'
   $c-shadow = rgb(86,75,65)
 
+.chapter-blocks-wrapper
+  position relative
+
 .chapter-blocks
   display flex
   flex-direction column
   padding 0 36px
 
+  &--carousel
+    display block
+    padding 40px 0 0
+
   @media (min-width: $screen-md-min)
     flex-direction row
     padding 0
 
-.chapter,
-.chapter__section
+.chapter
+  flex 1
   padding 0
+  margin-bottom 48px
 
   &::before
     content none
-
-.chapter
-  flex 1
-  margin-bottom 48px
 
   @media (min-width: $screen-md-min)
     margin-bottom 0
@@ -97,58 +157,30 @@ export default {
     &:first-of-type
       margin-left 0
 
-  &__content
-    display flex
-    flex-direction column
-    height 100%
-    padding: 38px 30px 58px 30px
-    background $c-white
-    border-radius: 4px
-    color: $c-landing-gray
-    font-size $fs-4
-    box-shadow 0 10px 20px 0 rgba($c-shadow, 0.05)
-    transition: box-shadow ease .4s
+.carousel-buttons
+  position absolute
+  top 0
+  right 15px
+  display flex
+  z-index 50
 
-    &:hover
-      box-shadow 0 20px 40px 0 rgba($c-shadow, 0.3)
+  @media (min-width: $screen-md-min)
+    top auto
+    bottom 0
 
-      .header__number,
-      .header__arrow
-        color $c-primary
-        opacity 1
-      .chapter__title,
-      .section
-       color: $c-landing-text
-
-  &__header
-    display flex
-    justify-content space-between
-
-  &__title
-    margin 0
-    font-weight $fw-semibold
-    line-height 1.5
-    transition: color ease .2s
-
-.header__number
-  margin-bottom 20px
-  font-weight $fw-bold
-  line-height 1
-  opacity 0.5
-  transition: opacity ease .2s, color ease .2s
-
-.header__arrow
-  width 20px
-  height 14px
+.carousel-button
+  width 30px
+  height 40px
+  margin-left 10px
   color $c-primary
-  opacity 0
-  transition opacity ease .2s
+  cursor pointer
+  transition transform ease-in-out .2s
 
-.chapter__section
-  margin-top 20px
-  color $c-landing-gray
-  font-size $fs-2
-  line-height 1.5
-  transition: color ease .2s
+  &--next
+    &:hover
+      transform: translateX(3px)
 
+  &--prev
+    &:hover
+      transform: translateX(-3px)
 </style>

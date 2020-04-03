@@ -1,7 +1,10 @@
 <template>
   <section class="landing-chapters">
     <div class="landing-chapters-container">
-      <div class="landing-chapters__col landing-chapters__col--intro">
+      <div
+        class="landing-chapters__col landing-chapters__col--intro"
+        :class="{'landing-chapters__col--extra-padding': hasCarousel}"
+      >
         <SectionIntro
           class="intro"
           :title="title"
@@ -21,10 +24,14 @@
           />
         </div>
       </div>
-      <div class="landing-chapters__col landing-chapters__col--chapters">
+      <div
+        class="landing-chapters__col landing-chapters__col--chapters"
+        :class="{'landing-chapters__col--with-carousel': hasCarousel}"
+      >
         <ChapterBlocks
           :chapters="chapters"
           :limit-section-in-chapter="limitSectionInChapter"
+          :has-carousel="hasCarousel"
         />
       </div>
       <ReadButton class="button" />
@@ -33,6 +40,7 @@
 </template>
 
 <script>
+
 import BaseImage from '@theme/global-components/BaseImage'
 import ReadButton from '@theme/components/ReadButton'
 import ChapterBlocks from '@theme/components/ChapterBlocks'
@@ -78,6 +86,10 @@ export default {
       type: Number,
       default: undefined,
     },
+    hasCarousel: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   computed: {
@@ -86,7 +98,11 @@ export default {
     },
 
     chapters () {
-      return this.$chapters.slice(this.chapterDisplayStart, this.chapterDisplayEnd)
+      const chapters = this.hasCarousel
+        ? this.$chapters.slice(this.chapterDisplayStart)
+        : this.$chapters.slice(this.chapterDisplayStart, this.chapterDisplayEnd)
+
+      return chapters
     },
   },
 }
@@ -105,17 +121,28 @@ export default {
 .landing-chapters-container
   @extend $landing-container
   display flex
-  flex-direction column
-  align-items center
-
-  @media (min-width: $screen-md-min)
-    flex-direction row
-    align-items flex-start
+  flex-direction row
+  justify-content center
+  align-items flex-start
+  flex-wrap wrap
 
 .landing-chapters__col
+  flex-basis: 100%
+
   &--intro
     flex 1
     margin-bottom 80px
+
+  &--extra-padding
+    @media (min-width: $screen-md-min)
+      padding-top 20px
+
+  &--with-carousel
+    max-width 880px
+    overflow hidden
+
+    @media (min-width: $screen-md-min)
+      max-width none
 
   @media (min-width: $screen-md-min)
     &--intro
@@ -148,9 +175,11 @@ export default {
 .intro
   max-width 270px
   text-align center
+  margin: auto
 
   @media (min-width: $screen-md-min)
     max-width 166px
+    margin-left 0
     text-align left
 
 </style>
