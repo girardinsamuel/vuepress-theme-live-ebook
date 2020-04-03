@@ -280,6 +280,8 @@ There is also an option `limitSectionInChapter` to limit displayed sections in c
 />
 ```
 
+> In addition, you can pass `hasCarousel` option and then all chapters will be displayed
+
 The `intro` and image related properties are optional.
 
 This will produce a following outcome:
