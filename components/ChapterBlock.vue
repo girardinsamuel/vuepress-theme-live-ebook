@@ -1,9 +1,9 @@
 <template>
   <div
     data-aos="fade-up"
-    data-aos-duration="1000"
-    data-aos-offset="-200"
-    :data-aos-delay="200 * (order + 1)"
+    :data-aos-duration="aosAnimationDuration"
+    :data-aos-offset="aosAnimationTriggerOffset"
+    :data-aos-delay="aosDelayStartingValue * (order + 1)"
     class="chapter-wrapper"
     :class="{'chapter-wrapper--with-carousel': hasCarousel}"
   >
@@ -55,7 +55,7 @@ export default {
     },
     limitSectionInChapter: {
       type: Number,
-      default: undefined,
+      default: 0,
     },
     chapterData: {
       type: Object,
@@ -79,11 +79,23 @@ export default {
     },
   },
 
+  data () {
+    return {
+      aosAnimationDuration: 1000,
+      aosAnimationTriggerOffset: -200,
+      aosDelayStartingValue: 200,
+    }
+  },
+
   computed: {
     sections () {
-      return chapter => chapter.headers && chapter.headers
-        .filter(chapter => chapter.level === 2)
-        .slice(0, this.limitSectionInChapter)
+      return chapter => {
+        const chapterSections = chapter.headers && chapter.headers.filter(chapter => chapter.level === 2)
+
+        return this.limitSectionInChapter !== 0 && chapterSections
+          ? chapterSections.slice(0, this.limitSectionInChapter)
+          : chapterSections
+      }
     },
   },
 }

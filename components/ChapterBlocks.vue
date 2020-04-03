@@ -25,8 +25,8 @@
       v-if="hasCarousel"
       class="carousel-buttons"
       data-aos="fade-up"
-      data-aos-duration="1000"
-      data-aos-offset="-200"
+      :data-aos-duration="aosAnimationDuration"
+      :data-aos-offset="aosAnimationTriggerOffset"
     >
       <button
         class="carousel-button carousel-button--prev"
@@ -67,7 +67,7 @@ export default {
     },
     limitSectionInChapter: {
       type: Number,
-      default: undefined,
+      default: 0,
     },
     hasCarousel: {
       type: Boolean,
@@ -77,7 +77,9 @@ export default {
 
   data () {
     return {
-      defaultSettings: {
+      aosAnimationDuration: 1000,
+      aosAnimationTriggerOffset: -200,
+      defaultCarouselSettings: {
         selector: '.js-carousel',
         duration: 300,
         easing: 'ease',
@@ -103,7 +105,7 @@ export default {
 
   methods: {
     initCarousel () {
-      this.carousel = new Siema(this.defaultSettings)
+      this.carousel = new Siema(this.defaultCarouselSettings)
     },
 
     destroyCarousel () {
