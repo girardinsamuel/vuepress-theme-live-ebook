@@ -82,7 +82,6 @@ export default {
   &__title
     margin 0
     font-size $fs-7
-    text-align left
     line-height 1.16
 
   &__subtitle
