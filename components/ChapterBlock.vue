@@ -90,6 +90,15 @@ export default {
   computed: {
     sections () {
       return chapter => {
+        const { chapter_home_intro: chapterHomeIntro } = chapter.frontmatter
+
+        if (chapterHomeIntro) {
+          return chapterHomeIntro.map((intro, index) => ({
+            key: index,
+            title: intro,
+          }))
+        }
+
         const chapterSections = chapter.headers && chapter.headers.filter(chapter => chapter.level === 2)
 
         return this.limitSectionInChapter !== 0 && chapterSections
