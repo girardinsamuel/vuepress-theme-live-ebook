@@ -129,6 +129,8 @@ layout: chapter
 title: "Example title of Chapter 2"
 chapter_number: "02"
 description: In this chapter you will ...
+chapter_home_intro:
+- some new custom text
 ---
 
 # Example title of Chapter 2
@@ -137,6 +139,7 @@ Chapter content goes here.
 ```
 
 - Fields: `layout`, `title` and `chapter_number` are required.
+- Field `chapter_home_intro` is optional and it is used for `<LandingChapters />` intro text. By default `<LandingChapters />` displays chapter's heading level 2.
 - `description` field is optional, if present - it will be places in proper meta tags on the page. Defaults to the description from `.vuepress/config.js`
 - Make sure that `title` in front matter corresponds to the primary heading - as in the above example.
 - Use only one H1 heading (`# ...`).
