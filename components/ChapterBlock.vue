@@ -89,8 +89,8 @@ export default {
 
   computed: {
     sections () {
-      return chapter => {
-        const { chapter_home_intro: chapterHomeIntro } = chapter.frontmatter
+      return ({ frontmatter, headers }) => {
+        const { chapter_home_intro: chapterHomeIntro } = frontmatter
 
         if (chapterHomeIntro) {
           return chapterHomeIntro.map((intro, index) => ({
@@ -99,7 +99,7 @@ export default {
           }))
         }
 
-        const chapterSections = chapter.headers && chapter.headers.filter(chapter => chapter.level === 2)
+        const chapterSections = headers && headers.filter(chapter => chapter.level === 2)
 
         return this.limitSectionInChapter !== 0 && chapterSections
           ? chapterSections.slice(0, this.limitSectionInChapter)
