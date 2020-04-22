@@ -91,9 +91,9 @@ export default {
     }
   },
 
-  mounted () {
-    if (this.hasCarousel) {
-      this.initCarousel()
+  created () {
+    if (this.hasCarousel && !this.$ssrContext) {
+      this.$nextTick(() => this.initCarousel())
     }
   },
 
