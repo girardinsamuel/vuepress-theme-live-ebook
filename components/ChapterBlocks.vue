@@ -77,6 +77,7 @@ export default {
 
   data () {
     return {
+      carousel: null,
       aosAnimationDuration: 1000,
       aosAnimationTriggerOffset: -200,
       defaultCarouselSettings: {
@@ -111,6 +112,7 @@ export default {
     destroyCarousel () {
       const restoreOriginalMarkup = true
       this.carousel.destroy(restoreOriginalMarkup)
+      this.carousel = null
     },
 
     goNextSlide (index) {
